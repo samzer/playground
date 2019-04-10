@@ -1,11 +1,5 @@
-class Fly {
-
+class Fly extends Mover {
   // The Mover tracks position, velocity, and acceleration
-  PVector position;
-  PVector restPosition;
-  PVector velocity;
-  PVector acceleration;
-  // The Mover's maximum speed
   float topspeed;
   PImage fly;
   float tx,ty;
@@ -15,21 +9,24 @@ class Fly {
     // Start in the center
     position = new PVector(width/2,height/2);
 
-    //restPosition = position.get();
     velocity = new PVector(0,0);
-    topspeed = 4;
-    //acceleration = PVector.random2D();
+    topspeed = 10;
+    acceleration = PVector.random2D();
     //acceleration.mult(2);
     fly = loadImage("img/fly.png");
     tx = random(0,10000);
     ty = random(0,10000);
+    mass = 1;
   }
 
   void update() {
-    x = map(noise(tx), 0, 1, -3, 3);
-    y = map(noise(ty), 0, 1, -3, 3);
+    x = map(noise(tx), 0, 1, -1, 1);
+    y = map(noise(ty), 0, 1, -1, 1);
 
-    acceleration = new PVector(x, y);
+    //acceleration = new PVector(x, y);
+     acceleration.x += x;
+     acceleration.y += y;
+    
     //acceleration.mult(0.2);
         //acceleration.mult(random(2));
 
@@ -40,6 +37,7 @@ class Fly {
     position.add(velocity);
         tx += 0.01;
     ty += 0.01;
+    acceleration.mult(0);
   }
 
   void display() {
@@ -69,10 +67,22 @@ class Fly {
       position.y = height;
     }
   }
-
-  void draw() {
-     update();
-     checkEdges();
-     display();
+  
+  void applyForce(PVector force) {
+    PVector f = PVector.div(force, mass);
+    acceleration.add(f);
   }
+ 
+  PVector repel(Mover m) {
+    PVector force = PVector.sub(position,m.position);
+    float distance = force.mag();
+    distance = constrain(distance,5.0,400.0);
+
+
+    force.normalize();
+    float strength = (- 4 * mass * m.mass) / (distance * distance);
+    force.mult(strength);
+    return force;
+  }
+
 }

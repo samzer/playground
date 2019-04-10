@@ -1,17 +1,18 @@
-class Rabbit {
+class Rabbit extends Mover {
 
   // The Mover tracks position, velocity, and acceleration
-  PVector position;
   PVector restPosition;
-  PVector velocity;
-  PVector acceleration;
+  //PVector velocity;
+  //PVector acceleration;
   // The Mover's maximum speed
   float topspeed;
   PImage bunny;
+  float mass;
 
   Rabbit() {
     // Start in the center
-    position = new PVector(width/2,height/2);
+    //position = new PVector(width/2,height/2);
+    position = new PVector(random(0,width),random(0,height));
 
     restPosition = position.get();
     velocity = new PVector(0,0);
@@ -19,6 +20,7 @@ class Rabbit {
     acceleration = PVector.random2D();
     acceleration.mult(3);
     bunny = loadImage("img/bunny.jpg");
+    mass = 200;
   }
 
   void update() {
@@ -51,6 +53,23 @@ class Rabbit {
     image(bunny, 0,0,48,48);
     popMatrix();
   }
+  
+  PVector attract(Mover m) {
+    PVector force = PVector.sub(position,m.position);
+    float distance = force.mag();
+    distance = constrain(distance,5.0,400.0);
+
+
+    force.normalize();
+    float strength = (4 * mass * m.mass) / (distance * distance);
+    force.mult(strength);
+    return force;
+  }
+  
+  void applyForce(PVector force) {
+    PVector f = PVector.div(force, mass);
+    acceleration.add(f);
+  }
 
   void checkEdges() {
 
@@ -67,11 +86,5 @@ class Rabbit {
       position.y = height;
     }
 
-  }
-
-  void draw() {
-     update();
-     checkEdges();
-     display();
   }
 }

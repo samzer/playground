@@ -1,35 +1,32 @@
-class Snake {
-
-  // The Mover tracks position, velocity, and acceleration
-  PVector position;
-  PVector restPosition;
-  PVector velocity;
-  PVector acceleration;
-  // The Mover's maximum speed
+class Snake extends Mover {
   float topspeed;
   PImage snake;
 
   Snake() {
     // Start in the center
-    position = new PVector(width/2,height/2);
+    //position = new PVector(width/2,height/2);
+    position = new PVector(random(0,width),random(0,height));
 
-    //restPosition = position.get();
     velocity = new PVector(0,0);
-    topspeed = 2;
-    //acceleration = PVector.random2D();
-    //acceleration.mult(2);
+    topspeed = 5;
     snake = loadImage("img/Snake.png");
+    mass = 100;
+    acceleration = PVector.random2D();
+
   }
 
   void update() {
     // Velocity changes according to acceleration
-    acceleration = PVector.random2D();
+    PVector acc = PVector.random2D();
+    acceleration.add(acc);
+    
     acceleration.mult(0.2);
     velocity.add(acceleration);
 
     // Limit the velocity by topspeed
     velocity.limit(topspeed);
     position.add(velocity);
+    acceleration.mult(0);
   }
 
   void display() {
@@ -59,10 +56,21 @@ class Snake {
       position.y = height;
     }
   }
+  
+  void applyForce(PVector force) {
+    PVector f = PVector.div(force, mass);
+    acceleration.add(f);
+  }
+  
+  PVector repel(Mover m) {
+    PVector force = PVector.sub(position,m.position);
+    float distance = force.mag();
+    distance = constrain(distance,5.0,400.0);
 
-  void draw() {
-     update();
-     checkEdges();
-     display();
+
+    force.normalize();
+    float strength = (- 4 * mass * m.mass) / (distance * distance);
+    force.mult(strength);
+    return force;
   }
 }
