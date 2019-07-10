@@ -1,6 +1,7 @@
 import csv
 import numpy as np
 
+
 class MultipleLinearRegression:
     def __init__(self, epoch=3, batch_size=15, lr=0.001):
         self.weight = []
@@ -23,14 +24,12 @@ class MultipleLinearRegression:
         dCb = 0
         bs = len(x_batch)
 
-        for i in range(bs):
-            y_pred = self.predict_single(x_batch[i])
-            y_actual = y_batch[i]
-            diff = y_pred - y_actual
+        y_pred = self.predict(x_batch)
+        y_actual = y_batch
+        diff = y_pred - y_actual
 
-            for j in range(self.weight.shape[0]):
-                dCw[j] += diff*x_batch[i][j]
-            dCb +=  diff
+        dCw = np.dot(np.transpose(x_batch), diff)
+        dCb =  sum(diff)
 
         dCw = (2*dCw)/bs
         dCb = (2*dCb)/bs
@@ -41,10 +40,7 @@ class MultipleLinearRegression:
     def cost(self, X, Y):
         y_pred = self.predict(X)
         N = len(Y)
-        cost_sum = 0
-
-        for i in range(N):
-            cost_sum += (y_pred[i] - Y[i])**2
+        cost_sum = np.sum((y_pred - Y)**2, axis=0)
 
         return cost_sum / N
 
@@ -52,10 +48,8 @@ class MultipleLinearRegression:
         self.sgd(x_batch, y_batch)
 
     def predict(self, x):
-        return [ self.predict_single(row) for row in x]
+        return np.dot(x, self.weight) + self.bias
 
-    def predict_single(self, x_single):
-        return sum(self.weight*x_single) + self.bias
 
 def feature_scale(X, x_min, x_max):
     nom = (X-X.min(axis=0))*(x_max-x_min)

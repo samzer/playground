@@ -1,7 +1,6 @@
 from sklearn.linear_model import LinearRegression
 from base import MultipleLinearRegression, feature_scale
 from sklearn.datasets import load_boston
-import numpy as np
 
 data = load_boston()
 Y = data['target']
