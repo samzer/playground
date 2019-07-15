@@ -31,8 +31,8 @@ class MultipleLogisticRegression:
         dCw = np.dot(np.transpose(x_batch), diff)
         dCb =  sum(diff)
 
-        dCw = (2*dCw)/bs
-        dCb = (2*dCb)/bs
+        dCw = dCw/bs
+        dCb = dCb/bs
 
         self.weight -=  self.lr * dCw
         self.bias -=  self.lr * dCb
@@ -40,9 +40,9 @@ class MultipleLogisticRegression:
     def cost(self, X, Y):
         y_pred = self.predict(X)
         N = len(Y)
-        cost_sum = np.sum((y_pred - Y)**2, axis=0)
+        cost_sum = np.sum((Y*np.log(y_pred) + (1-Y)*np.log(1 - y_pred)) , axis=0)
 
-        return cost_sum / N
+        return -(cost_sum / N)
 
     def update_weights(self, x_batch, y_batch):
         self.sgd(x_batch, y_batch)

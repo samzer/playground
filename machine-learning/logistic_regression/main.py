@@ -9,7 +9,7 @@ X = [[ float(e) for e in row[1:]] for row in data]
 X = np.array(X)
 X = feature_scale(X, -1, 1)
 
-model = MultipleLogisticRegression(epoch=100000, lr=0.0001, batch_size=40)
+model = MultipleLogisticRegression(epoch=20000, lr=0.001, batch_size=40)
 model.fit(X, Y)
 
 print('----LogisticRegression----')
