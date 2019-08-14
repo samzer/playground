@@ -36,7 +36,6 @@ class DecisionTree:
         else:
             node['right'] = self.create_leaf(node['right'])
 
-
     def gini_index(self, data_groups):
         # Get the number of classes
         N = float(sum([ len(group) for group in data_groups]))
@@ -96,7 +95,6 @@ class DecisionTree:
 
         # Iterate through columns
         for c in range(num_col):
-
             # Iterate through the rows
             for r in range(num_row):
                 # Find the gini_index of that split
@@ -172,6 +170,12 @@ def read_data(filename):
     return result
 
 def precision(y_actual, y_pred):
+    '''
+    TP is True Positive
+    FP is False Positive
+    Precision = TP / (TP + FP)
+    '''
+
     if len(y_actual) != len(y_pred):
         raise ValueError("y_actual and y_pred need to be of same dimension")
 
@@ -190,6 +194,12 @@ def precision(y_actual, y_pred):
     return tp/(tp + fp)
 
 def recall(y_actual, y_pred):
+    '''
+    TP is True Positive
+    FN is False Negative
+    Recall = TP / (TP + FN)
+    '''
+
     if len(y_actual) != len(y_pred):
         raise ValueError("y_actual and y_pred need to be of same dimension")
 
