@@ -1,15 +1,17 @@
 import csv
 import numpy as np
 from collections import Counter
-
+import copy
 
 class DecisionTree:
-    def __init__(self, max_depth, min_split_size):
+    def __init__(self, max_depth, min_split_size, ):
         self.max_depth = max_depth
         self.min_split_size = min_split_size
+        self.col_indexes = None
         self.tree = {}
 
-    def fit(self, X, Y):
+    def fit(self, X, Y, col_indexes=None):
+        self.col_indexes = col_indexes
         data = self.combine_XY(X, Y)
         self.tree = self.create_node(data)
         self.create_branch(self.tree, 1)
@@ -90,13 +92,13 @@ class DecisionTree:
         left = None
         right = None
 
-        num_row = len(data)
-        num_col = len(data[0]) - 1
+        rows = range(len(data))
+        cols =  self.col_indexes if self.col_indexes else range(len(data[0]) - 1)
 
         # Iterate through columns
-        for c in range(num_col):
+        for c in cols:
             # Iterate through the rows
-            for r in range(num_row):
+            for r in rows:
                 # Find the gini_index of that split
                 data_groups = self.split_data(data, c, data[r][c])
 
@@ -141,7 +143,7 @@ class DecisionTree:
         return result
 
     def combine_XY(self, X, Y):
-        data = X[:]
+        data = copy.deepcopy(X)
 
         for i, row in enumerate(data):
             row.append(Y[i])
