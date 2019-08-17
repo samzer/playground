@@ -9,6 +9,11 @@
 #notes           :
 #python_version  : >=3.6
 #==============================================================================
+<<<<<<< HEAD
+=======
+
+
+>>>>>>> 84f3ff82c6fbb3950439350d4213b55b80e55504
 from random import shuffle, choice
 from sys import argv
 
