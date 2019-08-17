@@ -1,3 +1,16 @@
+#!/usr/bin/env python
+#title           :Monty Hall with Monte Carlo
+#description     :This script uses Monte Carlo simulation on Monty Hall problem
+#                 to determine the answer to the Monty Hall problem
+#author          : Samir Madhavan
+#date            :20190817
+#version         :0.1
+#usage           :python main.py 10000
+#notes           :
+#python_version  : >=3.6
+#==============================================================================
+
+
 from random import shuffle, choice
 from sys import argv
 
