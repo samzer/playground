@@ -3,10 +3,10 @@
 #description     :This script uses Monte Carlo simulation on Monty Hall problem
 #                 to determine the answer to the Monty Hall problem
 #author          : Samir Madhavan
+#website         : https://www.samirmadhavan.com
 #date            :20190817
 #version         :0.1
 #usage           :python main.py 10000
-#notes           :
 #python_version  : >=3.6
 #==============================================================================
 from random import shuffle, choice
