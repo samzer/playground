@@ -13,7 +13,7 @@ def api():
     data = request.json
     X,y = process_data(data)
 
-    model = SupportVectorMachine()
+    model = SupportVectorMachine(0)
     model.fit(X,y)
 
 

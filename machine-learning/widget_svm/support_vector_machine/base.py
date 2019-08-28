@@ -5,7 +5,7 @@ from cvxopt import solvers as cvxopt_solvers
 
 class SupportVectorMachine:
     def __init__(self, C=10):
-        self.C = 10
+        self.C = C
         self.w = None
         self.b = None
 
@@ -21,8 +21,12 @@ class SupportVectorMachine:
         # Quadratic Programming
         P = cvxopt_matrix(H)
         q = cvxopt_matrix(-np.ones((m, 1)))
-        G = cvxopt_matrix(np.vstack((np.eye(m)*-1,np.eye(m))))
-        h = cvxopt_matrix(np.hstack((np.zeros(m), np.ones(m) * self.C)))
+        if self.C:
+            G = cvxopt_matrix(np.vstack((np.eye(m)*-1,np.eye(m))))
+            h = cvxopt_matrix(np.hstack((np.zeros(m), np.ones(m) * self.C)))
+        else:
+            G = cvxopt_matrix(-np.eye(m))
+            h = cvxopt_matrix(np.zeros(m))
         A = cvxopt_matrix(y.reshape(1, -1))
         b = cvxopt_matrix(np.zeros(1))
 
