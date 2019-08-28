@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>widget_svm</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+  </head>
+  <body>
+    <div id="container"></div>
+    <button id="red-btn" onClick="setRed()">Red</button>
+    <button id="blue-btn" onClick="setBlue()">Blue</button>
+
+    <button id="generate-btn" onClick="callGenerate()">Generate</button>
+
+    <script src="https://code.highcharts.com/highcharts.src.js"></script>
+    <script>
+    var state = {
+      pointColor : 'red'
+    }
+
+    var redData = [
+        [3, 5],
+        [8, 9],
+    ];
+
+    var blueData = [
+        [4, 5],
+        [5, 9],
+    ];
+
+    var highcharts= Highcharts.chart('container', {
+        chart: {
+            type: 'scatter',
+            zoomType: 'xy',
+            events: {
+              click: function (event) {
+                  var x = event.xAxis[0].value;
+                  var y = event.yAxis[0].value;
+
+                  if(state.pointColor == 'red'){
+                    this.series[1].addPoint([x, y]);
+                  } else {
+                    this.series[2].addPoint([x, y]);
+                  }
+              }
+          },
+        },
+        title: {
+            text: 'Support Vector Machine Visualizer'
+        },
+        yAxis: {
+            title: {
+                text: 'X1'
+            }
+        },
+        xAxis: {
+            title: {
+                text: 'X2'
+            }
+        },
+        tooltip: {
+            useHTML: true,
+            headerFormat: null,
+            pointFormat: '<b>Country</b>: {point.name}<br><b>GDP per capita</b>: {point.x} $<br/><b>Life satisfaction</b>: {point.y}',
+            enabled: false
+
+        },
+        legend: {
+            enabled: false
+        },
+        plotOptions: {
+            series: {
+                point: {
+                    events: {
+                        click: function () {
+                            if (this.series.data.length > 1) {
+                                this.remove();
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        series: [{
+            type: 'line',
+            name: 'Regression Line',
+            color: "#b6c1ff",
+            data: [
+                [5, 4.89E+00],
+                [3, 8.13E+00]
+            ],
+            marker: {
+                enabled: false
+            },
+            states: {
+                hover: {
+                    lineWidth: 0
+                }
+            },
+            enableMouseTracking: false
+        }, {
+            keys: ['x', 'y'],
+            color: "red",
+            name: "Data Points",
+            data: redData,
+        },
+        {
+        keys: ['x', 'y'],
+            color: "blue",
+            name: "Data Points",
+            data: blueData
+        }]
+      });
+
+      function setRed(){
+        state.pointColor = 'red';
+      }
+
+      function setBlue(){
+        state.pointColor = 'blue';
+      }
+
+      function callGenerate(){
+        var data = {username: 'example'};
+
+        fetch('/api', {
+                          method: 'POST', // or 'PUT'
+                          body: JSON.stringify({
+                            '-1': blueData,
+                            '1': redData
+                          }), // data can be `string` or {object}!
+                          headers:{
+                            'Content-Type': 'application/json'
+                          }
+                        })
+          .then(function(response) {
+            return response.json();
+          }).then(function(r){
+              drawLine(r);
+          })
+      }
+
+      function drawLine(r){
+        var x_range = {
+          x_min : 999,
+          x_max : 0
+        },
+        y_range = {
+          y_min : 999,
+          y_max : 0
+        },
+        dataPoints = redData.concat(blueData);
+
+        for(var i=0; i < dataPoints.length; i++){
+          var m = dataPoints[i][0]*dataPoints[i][0] + dataPoints[i][1]*dataPoints[i][1];
+
+          if(x_range.x_min > dataPoints[i][0]){
+            x_range.x_min = dataPoints[i][0];
+          }
+          if(x_range.x_max < dataPoints[i][0]){
+            x_range.x_max = dataPoints[i][0];
+          }
+          // if(y_range.y_min > dataPoints[i][1]){
+          //   y_range.y_min = dataPoints[i][1];
+          // }
+          // if(y_range.y_max < dataPoints[i][1]){
+          //   y_range.y_max = dataPoints[i][1];
+          // }
+        }
+
+        var pointOne = [x_range.x_min, -r.b /r.w[1] - (r.w[0]*x_range.x_min)/r.w[1] ],
+            pointTwo = [x_range.x_max, -r.b /r.w[1] - (r.w[0]*x_range.x_max)/r.w[1] ];
+            // pointThree = [-r.b /r.w[0] - (r.w[1]*y_range.y_min)/r.w[0],  y_range.y_min],
+            // pointFour = [-r.b /r.w[0] - (r.w[1]*y_range.y_max)/r.w[0],  y_range.y_max];
+
+
+
+        highcharts.series[0].setData([pointOne, pointTwo]);
+        // // highcharts.series[0].addPoint(xIntercept);
+        // // highcharts.series[0].addPoint(yIntercept);
+        //
+        // console.log(xIntercept);
+      }
+    </script>
+  </body>
+</html>

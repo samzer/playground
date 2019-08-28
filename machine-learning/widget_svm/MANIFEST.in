@@ -1,0 +1,2 @@
+recursive-include widget_svm/templates *
+recursive-include widget_svm/static *
