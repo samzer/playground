@@ -1,5 +1,8 @@
 #!/usr/bin/env python3
 
+# O(log n)
+
+
 def binary_search(arr, item):
     low = 0
     high = len(arr) - 1
