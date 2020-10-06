@@ -30,7 +30,6 @@ def dijkstras():
         
         processed.append(node)
         node = find_cheapest_node()
-        print(node)
 
     print("---Costs----")
     print(costs)
